@@ -1,44 +1,51 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
 
-class POINT {
+class Point {
     int x, y;
-    POINT(int x, int y) {
+    Point (int x, int y) {
         this.x = x;
         this.y = y;
     }
 }
 
+
 public class Main {
 
-    public static int x[] = {0, 0, 1, -1};
-    public static int y[] = {1, -1, 0, 0};
-    public static int[][] square;
+    static int M;
+    static int N;
+    static int K;
+    static boolean square[][];
+    static int area = 0;
 
+    public static boolean checkRange(int x, int y) {
+        if (x>=0 && y>=0 && x<N && y<M) {
+            return true;
+        }
+        else return false;
+    }
 
-    public static int M;
-    public static int N;
-    public static int K;
-
-    public static int area = 0;
-
-    public static int bfs(int cur_i, int cur_j) {
-        Queue<POINT> q = new LinkedList<POINT>();
-
-        q.offer(new POINT(cur_i, cur_j));
-        square[cur_i][cur_j] = 1;
-
+    public static int bfs(int cur_x, int cur_y) {
+        int x[] = {0, 0, 1, -1};
+        int y[] = {1, -1, 0, 0};
 
         int res = 0;
+        Queue<Point> q = new LinkedList<Point>();
+        q.offer(new Point(cur_x, cur_y));
+        square[cur_x][cur_y] = true;
+
         while (!q.isEmpty()) {
-            POINT p = q.poll();
+            Point p = q.poll();
             res++;
             for (int i=0; i<4; i++) {
-                int res_x = p.x + x[i];
-                int res_y = p.y + y[i];
+                int go_x = p.x + x[i];
+                int go_y = p.y + y[i];
 
-                if (res_x >= 0 && res_y >= 0 && res_x < M && res_y < N && square[res_x][res_y] == 0) {
-                    q.offer(new POINT(res_x, res_y));
-                    square[res_x][res_y] = 1;
+                if(checkRange(go_x, go_y) && square[go_x][go_y] == false) {
+                    q.offer(new Point(go_x, go_y));
+                    square[go_x][go_y] = true;
                 }
             }
         }
@@ -47,41 +54,39 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
         ArrayList<Integer> list = new ArrayList<>();
-
-        Scanner sc = new Scanner(System.in);
 
         M = sc.nextInt();
         N = sc.nextInt();
         K = sc.nextInt();
 
-        square = new int[M][N];
+        square = new boolean[N][M];
 
-        for (int i=0; i<K; i++) {
+        while (K-- != 0) {
             int x1 = sc.nextInt();
             int y1 = sc.nextInt();
             int x2 = sc.nextInt();
             int y2 = sc.nextInt();
 
+
             for (int j=y1; j<y2; j++) {
-                for (int k=x1; k<x2; k++) {
-                    square[j][k] = 1;
+                for (int i=x1; i<x2; i++) {
+                    square[i][j] = true;
                 }
             }
         }
 
-        int count = 0;
-        for (int i=0; i<M; i++) {
-            for(int j=0; j<N; j++) {
-                if(square[i][j] == 0) {
+        for (int i=0; i<N; i++) {
+            for (int j=0; j<M; j++) {
+                if (square[i][j] == false) {
                     list.add(bfs(i, j));
                 }
             }
         }
 
         list.sort(null);
-
         System.out.println(area);
         for (int i=0; i<list.size(); i++) {
             System.out.print(list.get(i) + " ");
