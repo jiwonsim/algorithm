@@ -32,23 +32,16 @@ public class Main {
 
     public static void makeWallDFS(int wallCnt) {
         if (wallCnt == 3) {
-//            for (int i=0; i<N; i++) {
-//                for (int j=0; j<M; j++) {
-//                    System.out.print(temp[i][j] + " ");
-//                }
-//                System.out.println();
-//            }
-//            System.out.println();
             spreadVirusBFS();
-            return;
         }
-
-        for (int i=0; i<N; i++) {
-            for (int j=0; j<M; j++) {
-                if (temp[i][j] == 0) {
-                    temp[i][j] = 1;
-                    makeWallDFS(wallCnt+1);
-                    temp[i][j] = 0;
+        else {
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    if (temp[i][j] == 0) {
+                        temp[i][j] = 1;
+                        makeWallDFS(wallCnt + 1);
+                        temp[i][j] = 0;
+                    }
                 }
             }
         }
@@ -58,14 +51,14 @@ public class Main {
 
     public static int safeArea() {
         int safeAreaCnt = 0;
-        for (int i=0; i<N; i++) {
-            for (int j=0; j<M; j++) {
-                if(virusTemp[i][j] == 0) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (virusTemp[i][j] == 0) {
                     safeAreaCnt++;
                 }
             }
         }
-        System.out.print(safeAreaCnt + " ");
+
         return result = Math.max(result, safeAreaCnt);
     }
 
