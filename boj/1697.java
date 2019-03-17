@@ -3,44 +3,41 @@ import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
-    static int N, M;
-    static int checked[];
+    static int N, K;
+    static int visited[] = new int[100002];
 
-    public static int bfs() {
-        int second = 0;
+    public static void bfs() {
         Queue<Integer> q = new LinkedList<>();
-        q.offer(N);
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int i = 0; i < size; i++) {
-                N = q.poll();
 
-                if (N == M) return second;
-                if (N>0 && checked[N-1] == 0) {
-                    q.offer(N-1);
-                    checked[N-1] = 1;
-                }
-                if (N<100000 && checked[N+1] == 0) {
-                    q.offer(N+1);
-                    checked[N+1] = 1;
-                }
-                if (N*2 < 100000 && checked[N*2] == 0) {
-                    q.offer(N*2);
-                    checked[N*2] = 1;
-                }
+        q.add(N);
+        visited[N] = 1;
+        while (!q.isEmpty()) {
+            N = q.poll();
+
+            if (N == K) {
+                break;
             }
-            second++;
+            if (N-1 >= 0 && visited[N - 1] == 0) {
+                q.add(N - 1);
+                visited[N - 1] = visited[N] + 1;
+            }
+            if (N <= 100000 && visited[N + 1] == 0) {
+                q.add(N + 1);
+                visited[N + 1] = visited[N] + 1;
+            }
+            if (N * 2 <= 100000 && visited[N * 2] == 0) {
+                q.add(N * 2);
+                visited[N * 2] = visited[N] + 1;
+            }
         }
-        return second;
+        System.out.println(visited[K]-1);
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        M = sc.nextInt();
+        K = sc.nextInt();
 
-        checked = new int[100001];
-
-        System.out.println(bfs());
+        bfs();
     }
 }
