@@ -1,80 +1,98 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-class Point {
-    int x, y, depth;
-    Point(int x, int y, int depth) {
-        this.x = x;
-        this.y = y;
-        this.depth = depth;
-    }
-}
+/*
+1. ㅗ 모양을 제외한 나머지 값들은 4개의 깊이까지만 검사하는 dfs로 합을 구한다.
+2. ㅗ 모양은 dfs로 풀 수 없슴! -> brute-force를 이용해서 합을 구한다.
+3. 최대값 출력
+ */
 
 public class Main {
     static int N, M;
+    static int MAX = Integer.MIN_VALUE;
     static int arr[][];
-    static int cloneArr[][];
+    static boolean visited[][];
     static int toX[] = {1, -1, 0, 0};
     static int toY[] = {0, 0, 1, -1};
-    static ArrayList<Integer> list = new ArrayList<>();
 
-    public static void countSquereSize(Point p) {
-        int visited[][] = new int[N][M];
-        int result = 0;
-        Queue<Point> q = new LinkedList<>();
+    public static boolean checkRange(int x, int y) {
+        if (x >= 0 && y >= 0 && x < N && y < M) return true;
+        return false;
+    }
+    /*
+    혹시 CalculateSpecialBlock 에서 sx와 sy 값을 만들 때 (i + y) % 4 인덱스를 구하신 방법을 여쭤봐도 될까요?
+     */
 
-        q.offer(p);
-        visited[p.x][p.y] = 1;
-//        System.out.println("["+p.x+", "+p.y+"] : " + "result = " + result + "+" + arr[p.x][p.y]);
-//        result += arr[p.x][p.y];
+    public static void dfs(int x, int y, int depth, int sum) {
+        if (depth == 4) {
+            MAX = Math.max(sum, MAX);
+            return;
+        }
 
-        while (!q.isEmpty()) {
-            Point now = q.poll();
-            System.out.println("["+now.x+", "+now.y+"] : " + now.depth);
-            if (now.depth == 4) {
-//                System.out.println("["+p.x+", "+p.y+"] : " + result);
-                System.out.println();
-                System.out.println("result : " + result);
-                list.add(result);
-                now.depth = 0;
-                result = 0;
-            }
+        for (int i = 0; i < 4; i++) {
+            int goX = toX[i] + x;
+            int goY = toY[i] + y;
 
-            for (int i = 0; i < 4; i++) {
-                int goX = toX[i] + now.x;
-                int goY = toY[i] + now.y;
-
-                if (goX >= 0 && goX < N && goY >= 0 && goY < M) {
-                    if (visited[goX][goY] < 4) {
-                        result += arr[goX][goY];
-//                        System.out.println("["+goX+", "+goY+"] : result = " + result + "+"  + arr[goX][goY] + " / depth : " + now.depth );
-                        q.offer(new Point(goX, goY, now.depth+1));
-                        visited[goX][goY] = 1;
-                    }
-                }
+            if (checkRange(goX, goY) && visited[goX][goY] == false) {
+                visited[goX][goY] = true;
+                dfs(goX, goY, depth+1, sum + arr[goX][goY]);
+                visited[goX][goY] = false;
             }
         }
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void mountainBlock(int x, int y) {
+        int sum = 0;
+        boolean flag = false;
 
-        N = sc.nextInt();
-        M = sc.nextInt();
+        for (int i = 0; i < 4; i++) {
+            sum = arr[x][y];
+            flag = true;
+            for (int j = 0; j < 3; j++) {
+                int goX = x + toX[(i + j) % 4];
+                int goY = y + toY[(i + j) % 4];
+
+                if (checkRange(goX, goY)) {
+                    sum += arr[goX][goY];
+                }
+                else {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag)
+                MAX = Math.max(MAX, sum);
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
         arr = new int[N][M];
+        visited = new boolean[N][M];
 
         for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
-                arr[i][j] = sc.nextInt();
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                countSquereSize(new Point(i, j, 1));
-                System.out.println("!!!");
-            }
+        for (int i = 0; i < N * M; i++) {
+            int x = i / M;
+            int y = i % M;
+            visited[x][y] = true;
+            dfs(x, y, 1, arr[x][y]);
+            mountainBlock(x, y);
+            visited[x][y] = false;
         }
 
-        System.out.println(Collections.max(list));
+        System.out.println(MAX);
     }
 }
