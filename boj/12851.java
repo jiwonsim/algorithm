@@ -1,5 +1,3 @@
-import sun.nio.cs.ext.MacHebrew;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,49 +6,45 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 class Pair {
-    int cur, cnt;
-    Pair(int cur, int cnt) {
-        this.cur = cur;
-        this.cnt = cnt;
+    int count, current;
+
+    Pair(int count, int current) {
+        this.count = count;
+        this.current = current;
     }
 }
 
 public class Main {
-    static int N, K, count = 0, MIN = Integer.MAX_VALUE;
-    static int to[] = new int[]{-1, 0, 1};
+    static int N, K, arr[] = new int[100001];
+    static int count, MIN = Integer.MAX_VALUE;
     static boolean visited[] = new boolean[100001];
 
-    public static int bfs() {
+    public static void solve() {
         Queue<Pair> q = new LinkedList<>();
-
-        q.offer(new Pair(N, 0));
+        q.offer(new Pair(0, N));
         visited[N] = true;
         while (!q.isEmpty()) {
             Pair p = q.poll();
+            visited[p.current] = true;
 
-            visited[p.cur] = true;
-            if (p.cur == K) {
-                MIN = Math.min(MIN, p.cnt);
-                if (MIN != p.cnt) break;
+            if (p.current == K) {
+                MIN = Math.min(MIN, p.count);
+                if (MIN != p.count) break;
                 count++;
             }
 
-            for (int i = 0; i < to.length; i++) {
-                int next;
-                if (to[i] == 0)
-                    next = p.cur * 2;
-                else
-                    next = p.cur + to[i];
-
+            int arr[] = new int[3];
+            arr[0] = p.current - 1;
+            arr[1] = p.current + 1;
+            arr[2] = p.current * 2;
+            for (int i = 0; i < arr.length; i++) {
+                int next = arr[i];
                 if (next >= 0 && next <= 100000 && !visited[next]) {
-                    q.offer(new Pair(next, p.cnt + 1));
+                    q.offer(new Pair(p.count + 1, next));
                 }
             }
         }
-
-        return MIN;
     }
-
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -58,8 +52,8 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
-        System.out.println(bfs());
+        solve();
+        System.out.println(MIN);
         System.out.println(count);
-
     }
 }
