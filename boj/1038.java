@@ -1,34 +1,52 @@
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
-    public static ArrayList solve(long n, int index, ArrayList list) {
-        if (index > 10) return list;
-
-        list.add(n);
-
-        for (int i = 0; i < 10; i++) {
-            if (n % 10 > i) {
-                solve(n * 10 + i, index + 1, list);
+    public static void solve(int n) {
+        long arr[] = new long[n + 1];
+        int index = 1;
+        long val = 1;
+        int ten = 1;
+        while (true) {
+            if (val / 10 > 987654321) {
+                System.out.println("-1" );
+                break;
             }
+            if (index == arr.length) {
+                System.out.println(arr[index - 1]);
+                return;
+            }
+
+            if (index <= 10) {
+                arr[index++] = val++;
+                continue;
+            }
+
+            if (val > ten) ten *= 10;
+
+            boolean flag = true;
+            String str = String.valueOf(val);
+            int i;
+            for (i = 1; i < str.length(); i++) {
+                if (str.charAt(i - 1) <= str.charAt(i)) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (!flag) {
+                val = val + (int)Math.pow(10, str.length() - 1 - i) - (int)(val % Math.pow(10, str.length() - 1 - i));
+                continue;
+            }
+
+            arr[index++] = val;
+            val++;
+
         }
-        return list;
     }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
-        if (N >= 1023) {
-            System.out.println("-1");
-            return;
-        }
-        ArrayList<Integer> list = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++)
-            solve(i, 1, list);
-
-        Collections.sort(list);
-
-        System.out.println(list.get(N));
+        solve(N);
     }
 }
