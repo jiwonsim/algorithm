@@ -1,118 +1,82 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
 class Pair {
-    int x, y;
-    public Pair(int x, int y) {
+    int x, y, count;
+    boolean broken;
+
+    Pair(int x, int y, int count, boolean broken) {
         this.x = x;
         this.y = y;
+        this.count = count;
+        this.broken = broken;
     }
+
 }
 
 public class Main {
-    static int N, M, arr[][];
-    static int temp1[][], temp2[][];
-    static ArrayList<Pair> lists;
-    static int result = -1;
     static int toX[] = {0, 0, 1, -1};
     static int toY[] = {1, -1, 0, 0};
 
-    public static void solve(int temp[][], int startX, int startY) {
-        Queue<Pair> q = new LinkedList<Pair>();
-        q.offer(new Pair(startX, startY));
-        temp[startX][startY] = 1;
+    public static int moving_demo (int n, int m, int arr[][]) {
+        Queue<Pair> q = new LinkedList<>();
+        boolean visited[][][] = new boolean[n][m][2];
+        int STREET = 0, WALL = 1;
+        q.offer(new Pair(0, 0, 1, false));
+        visited[0][0][0] = true;
+
 
         while (!q.isEmpty()) {
             Pair p = q.poll();
+
+            if (p.x == n - 1 && p.y == m - 1) {
+                return p.count;
+            }
 
             for (int i = 0; i < 4; i++) {
                 int goX = p.x + toX[i];
                 int goY = p.y + toY[i];
 
-                if (goX < 0 || goX >= N || goY < 0 || goY >= M) continue;
+                if (goX < 0 || goX >= n || goY < 0 || goY >= m) continue;
+                if (arr[goX][goY] == 1) {
+                    // 벽을 만났다!
+                    if (p.broken == true) continue; // 뚫을 수 없으면 패쓰!
+                    if (visited[goX][goY][WALL]) continue; // 이미 뚫어서 방문했다면 패쓰!
 
-                if (arr[goX][goY] != 0)  continue;
-                if (temp[goX][goY] != 0) continue;
-
-                temp[goX][goY] = temp[p.x][p.y] + 1;
-                q.offer(new Pair(goX, goY));
-            }
-        }
-    }
-
-    public static void breakWall() {
-        for(Pair list : lists) {
-            for(int p = 0; p< 4; p++) {
-                int x1 = list.x + toX[p];
-                int y1 = list.y + toY[p];
-                if(x1 < 0 || x1 >= N || y1 < 0 || y1 >= M) continue;
-                if(temp1[x1][y1] == 0) continue;
-                int pivot = temp1[x1][y1];
-
-
-                int min = -1;
-                for(int dir = 0; dir < 4; dir++) {
-
-                    int x2 = list.x + toX[dir];
-                    int y2 = list.y + toY[dir];
-                    if(x2 < 0 || x2 >= N || y2 < 0 || y2 >= M) continue;
-                    if(temp2[x2][y2] == 0) continue;
-                    min = min == -1 || min > temp2[x2][y2] ? temp2[x2][y2] : min;
+                    q.offer(new Pair(goX, goY, p.count + 1, true));
+                    visited[goX][goY][WALL] = true;
                 }
-                if(min == -1) continue;
-                result = result == -1 || result > pivot + min + 1 ? pivot + min + 1 : result;
+
+                if (arr[goX][goY] == 0) {
+                    // 벽이 아닌 경우
+                    if (p.broken && !visited[goX][goY][WALL]) {
+                        q.offer(new Pair(goX, goY, p.count + 1, p.broken));
+                        visited[goX][goY][WALL] = true;
+                    }
+                    if (!p.broken && !visited[goX][goY][STREET]) {
+                        q.offer(new Pair(goX, goY, p.count + 1, p.broken));
+                        visited[goX][goY][STREET] = true;
+                    }
+
+                }
             }
         }
+        return  -1;
     }
 
-    public static void printArr(int[][] arr) {
-        for(int i = 0; i< N; i++) {
-            for(int j = 0; j < M; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        int M = sc.nextInt();
 
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        lists = new ArrayList<>();
-
-        arr = new int[N][M];
+        int arr[][] = new int[N][M];
         for (int i = 0; i < N; i++) {
-            String str = br.readLine();
+            String str = sc.next();
             for (int j = 0; j < M; j++) {
                 arr[i][j] = str.charAt(j) - '0';
-                if (arr[i][j] == 1) lists.add(new Pair(i, j));
             }
         }
-
-        temp1 = new int[N][M];
-        temp2 = new int[N][M];
-
-        solve(temp1, 0, 0); // (0,0)부터 시작
-//        printArr(temp1);
-
-        solve(temp2, N - 1, M - 1); // (N-1, M-1)부터 시작
-//        printArr(temp2);
-
-
-        if (temp1[N - 1][M - 1] != 0)
-            result = temp1[N - 1][M - 1];
-        else
-            breakWall();
-
-        System.out.println(result);
+        System.out.println(moving_demo(N, M, arr));
     }
 }
