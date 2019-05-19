@@ -3,13 +3,10 @@ import java.util.*;
 class Solution {
     public int first(int[] answers) {
         int sel = 1, cnt = 0;
-//        System.out.println(answers.length);
         for (int i = 0; i < answers.length; i++) {
             if (answers[i] == sel) {
-//                System.out.println("first : " + i + " -> " + sel);
                 cnt++;
             }
-//            System.out.print(sel + " ");
             sel ++;
             if (sel % 6 == 0) sel = 1;
         }
@@ -22,7 +19,6 @@ class Solution {
         for (int i = 0; i < answers.length; i++) {
             if (i % 2 == 0) {
                 sel = 2;
-//                System.out.print(".");
             }
             else {
                 sel = before;
@@ -30,13 +26,9 @@ class Solution {
                 if (sel == 2) sel++;
                 if (sel % 6 == 0) sel = 1;
                 before = sel;
-//                System.out.print("*");
             }
 
-//            System.out.print(sel + " ");
-
             if (answers[i] == sel) {
-//                System.out.println("second : " + i + " -> " + sel);
                 cnt++;
             }
         }
@@ -56,11 +48,7 @@ class Solution {
                 cur = before;
             }
 
-
-//            System.out.print(cur + " ");
-
             if (cur == answers[i]) {
-//                System.out.println("third : " + i + " -> " + cur);
                 cnt++;
             }
         }
@@ -70,11 +58,6 @@ class Solution {
 
     public int[] solution(int[] answers) {
         int[] answer = {};
-
-
-//        System.out.println(first(answers));
-//        System.out.println(second(answers));
-//        System.out.println(third(answers));
 
         List<Integer> list = new ArrayList<>();
         list.add(0, first(answers));
@@ -94,22 +77,5 @@ class Solution {
         }
 
         return answer;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int size = sc.nextInt();
-        int [] answers = new int[size];
-        for (int i = 0; i < size; i++) {
-            answers[i] = sc.nextInt();
-        }
-
-        Solution solution = new Solution();
-        int res[] = solution.solution(answers);
-        for (int i = 0; i < res.length; i++) {
-            System.out.print(res[i] + " ");
-        }
     }
 }
