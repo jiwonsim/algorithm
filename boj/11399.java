@@ -10,11 +10,10 @@ public class Main {
         }
 
         Arrays.sort(arr);
-        int sum = 0;
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j <= i; j++) {
-                sum += arr[j];
-            }
+        int sum = 0, before = 0;
+        for (int i : arr) {
+            before += i;
+            sum += before;
         }
 
         System.out.printf("%d", sum);
