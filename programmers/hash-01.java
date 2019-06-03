@@ -1,30 +1,33 @@
-import java.util.Arrays;
+import java.util.*;
+
+// 해쉬맵을 이용한 완못선
 
 class Solution {
     public String solution(String[] participant, String[] completion) {
         String answer = "";
 
-        Arrays.sort(participant);
-        Arrays.sort(completion);
+        HashMap<String, Integer> hm = new HashMap<>();
+        int val;
 
-        for (int i = 0; i < completion.length; i++) {
-            if (participant[i].equals(completion[i])) continue;
-            answer = participant[i]; break;
-
+        for (String part : participant) {
+            if (hm.get(part) == null) {
+                hm.put(part, 1);
+            }
+            else {
+                val = hm.get(part) + 1;
+                hm.put(part, val);
+            }
         }
 
+        for (String comp : completion) {
+            val = hm.get(comp) - 1;
+            hm.put(comp, val);
+        }
+
+        for (String key : hm.keySet()) {
+            if (hm.get(key) == 1) answer = key;
+        }
 
         return answer;
-    }
-}
-
-
-public class Main {
-    public static void main(String[] args) {
-        Solution s = new Solution();
-        String [] participant = {"mislav", "stanko", "mislav", "ana"};
-        String [] completion = {"stanko", "ana", "mislav"};
-
-        System.out.println(s.solution(participant, completion));
     }
 }
