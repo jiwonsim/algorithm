@@ -1,50 +1,38 @@
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
-class Solution {
-    public boolean isPalindrome(String str, int start, int end) {
-        if (start == end) return true; // 1자리일 때
+public class Main {
 
-        if (start + 1 == end) { // 2자리일 때
+    public static boolean isPalindrome(String str, int start, int end) {
+        if (start == end) return true; // 한 자리는 언제나 팰린드롬
+        if (start + 1 == end) {
             if (str.charAt(start) == str.charAt(end)) return true;
             return false;
         }
 
         if (str.charAt(start) != str.charAt(end)) return false;
-        else return isPalindrome(str, start + 1, end - 1);
+        return isPalindrome(str, start + 1, end - 1);
     }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
 
-    public int solution(String plain) {
-        int answer = 0;
+        Stack<Character> st = new Stack<>();
+        String res = str;
+        for (int i = 0; i < str.length(); i++) {
+            if (isPalindrome(res, 0, res.length() - 1)) break;
 
-        Stack<Character> s = new Stack<>();
+            res = str;
 
-        String tmpPlain = plain;
-        for (int i = 0; i < plain.length(); i++) {
-//            System.out.printf("%s \n", tmpPlain);
-            if (isPalindrome(tmpPlain, 0, tmpPlain.length() - 1)) break;
-
-            tmpPlain = plain;
             for (int j = 0; j <= i; j++) {
-                s.push(plain.charAt(j));
+                st.push(str.charAt(j));
             }
 
-            while (!s.isEmpty()) {
-                tmpPlain += s.pop();
+            while (!st.isEmpty()) {
+                res += st.pop();
             }
         }
 
-        answer = tmpPlain.length();
-
-        return answer;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Solution s = new Solution();
-        Scanner sc = new Scanner(System.in);
-
-        System.out.printf("%d", s.solution(sc.next()));
+//        System.out.printf("%s\n", res);
+        System.out.printf("%d\n", res.length());
     }
 }
