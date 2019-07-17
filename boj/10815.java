@@ -9,7 +9,7 @@ public class Main {
         for (int i = 0; i < N; i++) A.add(sc.nextInt());
 
         int M = sc.nextInt();
-        int[] B = new int[M + 1];
+        int[] B = new int[M];
         int[] res = new int[M];
         for (int i = 0; i < M; i++) {
             B[i] = sc.nextInt();
@@ -19,5 +19,3 @@ public class Main {
         for (int i = 0; i < M; i++) System.out.printf("%d ", res[i]);
     }
 }
-
-// 339808KB    4308ms
