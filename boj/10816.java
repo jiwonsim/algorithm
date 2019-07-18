@@ -1,18 +1,12 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
-//        HashSet<Integer> hs = new HashSet<>();
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
         int[] sg = new int[N];
-        String[] input = br.readLine().split(" ");
         for (int i = 0; i < N; i++)
-//            hs.add(sc.nextInt());
-            sg[i] = Integer.parseInt(input[i]);
+            sg[i] = sc.nextInt();
 
         Arrays.sort(sg);
         HashMap<Integer, Integer> hm = new HashMap<>();
@@ -21,19 +15,16 @@ public class Main {
             else hm.put(sg[i], 1);
         }
 
-        int M = Integer.parseInt(br.readLine());
-
+        int M = sc.nextInt();
         int[] num = new int[M];
-        int[] res = new int[M];
-
-        input = br.readLine().split(" ");
+        StringBuffer res = new StringBuffer();
         for (int i = 0; i < M; i++) {
-            num[i] = Integer.parseInt(input[i]);
-            if (hm.containsKey(num[i])) res[i] = hm.get(num[i]);
+            num[i] = sc.nextInt();
+            if (hm.containsKey(num[i])) res.append(hm.get(num[i]) + " ");
+            else res.append("0 ");
         }
 
-        for (int i = 0; i < M; i++) {
-            System.out.printf("%d ", res[i]);
-        }
+
+        System.out.printf("%s", res.toString());
     }
 }
