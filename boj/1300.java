@@ -10,8 +10,10 @@ import java.util.*;
     left = 1, right = 7, mid = 4 로 시작한다.
     1번째 과정에서 총 개수는 3 + 2 + 1로 6개. k = 7이므로 left를 mid + 1인 5로 바꿔준다.
     2번째 과정에서 mid = 6, 6을 대상으로 계산하면 3 + 3 + 2 = 8개가 나온다.
-    (N = 3, k = 7일 때  7보다 작은 수의 개수를 찾고 싶다면
-     3 * 3 배열 안에 있는 숫자들(i * j(1 <= i, j <= N))은 k / i(1 <= i <= N)를 해야 구할 수 있다.)
+    +) N = 3, k = 7일 때  7보다 작은 수의 개수를 찾고 싶다면
+       3 * 3 배열 안에 있는 숫자들(i * j(1 <= i, j <= N))은 k / i(1 <= i <= N)를 해야 구할 수 있다.
+       7보다 작은 숫자의 개수를 찾고 싶다면 7 / 1 + 7 / 2 + 7 / 3을 하는데 이때 7 / 1 같은 경우는 N보다 크기 때문에
+       그 개수가 N개인 것과 동일하므로 min(k / i, N)이라는 식을 사용해야 한다.
     이제 8은 k보다 크므로 res에 mid 값을 넣고 right를 mid - 1를 넣어준다. (5)
     left와 right가 동일하게 5가 나오며, 총 개수는 3 + 2 + 1 = 6개.
     left와 right가 동일하므로 마지막 과정으로 5보다 작은 수는 6개, 6보다 작은 수는 8개이므로 7번째 수는 6이다.
@@ -31,8 +33,10 @@ public class Main {
             int mid = (int)(left + right) / 2;
             long cnt = 0;
             for (int i = 1; i <= N; i++) {
+                System.out.printf("%d ", mid / i, N);
                 cnt += Math.min(mid / i, N);
             }
+            System.out.printf("\n");
 
             if (cnt >= k) {
                 res = mid;
