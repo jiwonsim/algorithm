@@ -1,58 +1,48 @@
-//참고한 사이트 : https://suriisurii.tistory.com/11
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
 public class Main {
-    static int N;
-    static int MIN = Integer.MAX_VALUE;
-    static int MAX = Integer.MIN_VALUE;
-
-    static boolean visited[];
-    static int arr[];
-    static int cal[];
-
-    public static void solve (int cur, int plus, int sub, int multi, int div, int sum) {
-        if (cur == N) {
-//            System.out.println("?!?! " + sum);
-            MIN = Math.min(sum, MIN);
-            MAX = Math.max(sum, MAX);
+    static int[] op, A;
+    static int N, MAX = Integer.MIN_VALUE, MIN = Integer.MAX_VALUE;
+    public static void solve(int plus, int sub, int mul, int div, int sum, int cnt) {
+        if (cnt >= N) {
+            if (sum > MAX) MAX = sum;
+            if (sum < MIN) MIN = sum;
             return;
         }
 
-//        System.out.println("잉");
-        if (plus < cal[0])
-            solve(cur + 1, plus + 1, sub, multi, div, sum + arr[cur]);
-        if (sub < cal[1])
-            solve(cur + 1, plus, sub + 1, multi, div, sum - arr[cur]);
-        if (multi < cal[2])
-            solve(cur + 1, plus, sub, multi + 1, div, sum * arr[cur]);
-        if (div < cal[3])
-            solve(cur + 1, plus, sub, multi, div + 1, sum / arr[cur]);
+        int tmp;
+
+        if (plus > 0) {
+            tmp = sum + A[cnt];
+            solve(plus - 1, sub, mul, div, tmp, cnt + 1);
+        }
+        if (sub > 0) {
+            tmp = sum - A[cnt];
+            solve(plus, sub - 1, mul, div, tmp, cnt + 1);
+        }
+        if (mul > 0) {
+            tmp = sum * A[cnt];
+            solve(plus, sub, mul - 1, div, tmp, cnt + 1);
+        }
+        if (div > 0) {
+            tmp = sum / A[cnt];
+            solve(plus, sub, mul, div - 1, tmp, cnt + 1);
+        }
     }
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        arr = new int[N];
-        cal = new int[4];
-        visited = new boolean[N - 1];
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < 4; i++) {
-            cal[i] = Integer.parseInt(st.nextToken());
-        }
+        op = new int[4];
 
-        solve(1, 0, 0, 0, 0, arr[0]);
+        N = sc.nextInt();
+        A = new int[N];
+        for (int i = 0; i < N; i++) A[i] = sc.nextInt();
+        for (int i = 0; i < 4; i++) op[i] = sc.nextInt();
 
-        System.out.println(MAX);
-        System.out.println(MIN);
+        solve(op[0], op[1], op[2], op[3], A[0], 1);
+
+        System.out.printf("%d\n%d\n", MAX, MIN);
 
     }
 }
