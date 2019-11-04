@@ -5,14 +5,14 @@ class Solution {
         long answer = 0;
 
         Arrays.sort(times);
-        long left = 0, right = times[times.length - 1] * n;
+        long left = 0, right = ((long)times[times.length - 1]) * n;
 
         while (left <= right) {
             long mid = (left + right) / 2;
 
-            int customer = n;
+            long customer = n;
             for (int i = 0; i < times.length; i++) {
-                customer -= (int)mid / times[i];
+                customer -= mid / times[i];
                 if (customer < 0) break;
             }
 
@@ -23,7 +23,6 @@ class Solution {
                 right = mid - 1;
                 answer = mid;
             }
-
         }
 
         return answer;
