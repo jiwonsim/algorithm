@@ -2,20 +2,26 @@ import java.io.*;
 
 public class Main{
 
+    static int solve(int N) {
+
+        int answer = 0;
+        while (N > 0) {
+            answer += N / 5;
+            N /= 5;
+        }
+
+        return answer;
+    }
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int N = Integer.parseInt(br.readLine());
 
-        int result = 0;
+        int answer = solve(N);
 
-        if (N == 0) result = 0;
-        else result = N / 5;
-        result += N / 25;
-        result += N / 125;
-
-        bw.write(result + "\n");
+        bw.write(answer + "\n");
 
         bw.flush();
         bw.close();
