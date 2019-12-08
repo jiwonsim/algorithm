@@ -2,10 +2,10 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static long MOD = 1000000007, height = 0;
+    static long MOD = 1000000007;
     static int size = 4000000;
     static long[] factorials = new long[4000001];
-    static long[] permat = new long[4000001];
+    static long[] inversed = new long[4000001];
 
     static void initFactorial() {
         factorials[1] = 1;
@@ -23,10 +23,10 @@ public class Main {
         return calcPower((n * n) % MOD, p / 2) % MOD;
     }
 
-    static void initPermat() {
-        permat[size] = calcPower(factorials[size], MOD - 2);
+    static void initInverse() {
+        inversed[size] = calcPower(factorials[size], MOD - 2);
         for (int i = size - 1; i > 0; i--) {
-            permat[i] = (permat[i + 1] * (i + 1)) % MOD;
+            inversed[i] = (inversed[i + 1] * (i + 1)) % MOD;
         }
     }
 
@@ -36,7 +36,7 @@ public class Main {
             return 1;
         }
 
-        return ((factorials[N] * permat[N - K]) % MOD) * permat[K] % MOD;
+        return ((factorials[N] * inversed[N - K]) % MOD) * inversed[K] % MOD;
     }
 
 
@@ -49,7 +49,7 @@ public class Main {
         int K = Integer.parseInt(in[1]);
 
         initFactorial();
-        initPermat();
+        initInverse();
         long answer = solve(N, K);
 
         bw.write(answer + "\n");
