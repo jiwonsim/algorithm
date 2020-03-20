@@ -2,7 +2,6 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-
     static class Node {
         int data;
         Node left, right;
@@ -22,37 +21,33 @@ public class Main {
         }
     }
 
-    static int n;
-    static int[] pre, in, order;
-    static Node node;
-
-    static Node create(int start, int end) {
-        if (start > end) return null;
-
-        int minOrder = Integer.MAX_VALUE, minVal = 0, minId = 0;
-        for (int i = start; i <= end; i++) {
-            int val = in[i];
-
-            if (minOrder > order[val]) {
-                minOrder = order[val];
-                minVal = val;
-                minId = i;
-            }
+    static int findRootId(int[] inorder, int root, int s, int e) {
+        for (int i = s; i <= e; i++) {
+            if (root == inorder[i]) return i;
         }
 
-        Node root = new Node(minVal);
-        root.setLeft(create(start, minId - 1));
-        root.setRight(create(minId + 1, end));
+        return -1;
+    }
+    static int rootId = 0;
 
-        return root;
+    static Node setTree(int[] preorder, int[] inorder, int s, int e) {
+        if (s > e) return null;
+        Node child;
+
+        int root = findRootId(inorder, preorder[rootId++], s, e);
+
+        child = new Node(inorder[root]);
+        child.setLeft(setTree(preorder, inorder, s, root - 1));
+        child.setRight(setTree(preorder, inorder, root + 1, e));
+
+        return child;
     }
 
-    static void postorder(Node node) {
-        if (node != null) {
-            postorder(node.left);
-            postorder(node.right);
-            System.out.printf("%d ", node.data);
-        }
+    static void postorder(Node node, StringBuffer answer) {
+        if (node == null) return;
+        postorder(node.left, answer);
+        postorder(node.right, answer);
+        answer.append(node.data + " ");
     }
 
     public static void main(String[] args) throws IOException {
@@ -60,27 +55,26 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int T = Integer.parseInt(br.readLine());
+
         while (T-- > 0) {
-            // input
-            n = Integer.parseInt(br.readLine());
-            order = new int[n + 1];
+            int n = Integer.parseInt(br.readLine());
+            StringBuffer answer = new StringBuffer();
+            rootId = 0;
 
-            pre = new int[n + 1];
-            String[] input = br.readLine().split(" ");
-            for (int i = 0; i < n; i++) {
-                pre[i] = Integer.parseInt(input[i]);
-                order[pre[i]] = i + 1;
-            }
+            String[] buf = br.readLine().split(" ");
+            int[] preorder = new int[n];
+            for (int i = 0; i < n; i++) preorder[i] = Integer.parseInt(buf[i]);
 
-            in = new int[n];
-            input = br.readLine().split(" ");
-            for (int i = 0; i < n; i++) {
-                in[i] = Integer.parseInt(input[i]);
-            }
+            buf = br.readLine().split(" ");
+            int[] inorder = new int[n];
+            for (int i = 0; i < n; i++) inorder[i] = Integer.parseInt(buf[i]);
 
-            node = create(0, n - 1);
-            postorder(node);
-            System.out.println();
+            Node tree = setTree(preorder, inorder, 0, n - 1);
+            postorder(tree, answer);
+
+            bw.write(answer + "\n");
+            bw.flush();
         }
+        bw.close();
     }
 }
