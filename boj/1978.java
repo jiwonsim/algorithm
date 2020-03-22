@@ -1,33 +1,33 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
+    static int[] arr = new int[1001];
 
-    public static int findPrimeNumber(int arr[]) {
-        int count = 0;
-        boolean flag = true;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == 1) continue;
-            for (int j = 2; j < arr[i]; j++) {
-                flag = true;
-                if (arr[i] % j == 0) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag == true) {
-                count++;
+    static void init() {
+        arr[1] = -1;
+        for (int i = 2; i <= 1000; i++) {
+            arr[i] = i;
+        }
+
+        for (int i = 2; i <= 1000; i++) {
+            for (int j = i + i; j <= 1000; j += i) {
+                if (arr[j] == 0) continue;
+                arr[j] = -1;
             }
         }
-        return count;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        init();
+
         int N = sc.nextInt();
-        int arr[] = new int[N];
+        int count = 0;
         for (int i = 0; i < N; i++) {
-            arr[i] = sc.nextInt();
+            int input = sc.nextInt();
+            if (arr[input] != -1) count++;
         }
-        System.out.println(findPrimeNumber(arr));
+
+        System.out.println(count);
     }
 }
