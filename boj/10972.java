@@ -1,58 +1,80 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int arr[];
 
-    public static void swap(int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-    public static boolean next() {
-        int index = -1;
-        for (int i = 0; i < arr.length - 1; i++) {
-            if (arr[i] < arr[i+1]) index = i;
-        }
-
-        if (index == -1) return false;
-
-        int j = arr.length - 1;
-        for (; j >= 0; j--) {
-            if (arr[j] > arr[index]) break;
-        }
-
-        // swap
-        swap(index, j);
-
-        for (int i = index + 1; i < (arr.length + index + 1) / 2; i++) {
-            int temp = arr[i];
-            arr[i] = arr[arr.length - (i - index)];
-            arr[arr.length - (i - index)] = temp;
-        }
-        return true;
-    }
+    static int N;
+    static long[] arr;
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        arr = new long[N];
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        arr = new int[N];
+        String[] input = br.readLine().split(" ");
         for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            arr[i] = Long.parseLong(input[i]);
         }
 
-        if (next()) {
-            for (int i = 0; i < arr.length; i++) {
-                System.out.print(arr[i] + " ");
-            }
+        if (N == 1 || switching(searchDesc()) == -1) {
+            bw.write("-1");
         }
         else {
-            System.out.println("-1");
+            for (int i = 0; i < N; i++) {
+                bw.write(arr[i] + " ");
+            }
         }
+        bw.flush();
+    }
+
+    static int switching(int index) {
+
+        if (index == N - 1) {
+            long temp = arr[index];
+            arr[index] = arr[index - 1];
+            arr[index - 1] = temp;
+            return 1;
+        }
+
+        long maxVal = Long.MAX_VALUE;
+        int maxId = -1;
+        for (int i = index + 1; i < N; i++) {
+            if (arr[index] < arr[i]) {
+                if (maxVal > arr[i]) {
+                    maxVal = arr[i];
+                    maxId = i;
+                }
+            }
+        }
+
+        if (maxId == -1) {
+            return -1;
+        }
+
+        long temp = arr[index];
+        arr[index] = arr[maxId];
+        arr[maxId] = temp;
+
+        sorting(index);
+        return 1;
+    }
+
+    static void sorting(int index) {
+        Arrays.sort(arr, index + 1, N);
+    }
+
+    static int searchDesc() {
+
+        long before = -1;
+        for (int i = N - 1; i >= 0; i--) {
+            if (before < arr[i]) {
+                before = arr[i];
+                continue;
+            }
+            return i;
+        }
+        return 0;
     }
 }
