@@ -23,7 +23,7 @@ public class Main {
                 int to = sc.nextInt() - 1;
 
                 map[from].add(to);
-                map[from].add(to);
+                map[to].add(from);
             }
 
             if (search()) System.out.println("YES");
