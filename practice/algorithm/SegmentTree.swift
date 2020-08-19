@@ -52,11 +52,19 @@ public class SegmentTree<T> {
             return function(leftResult, rightResult)
         }
     }
+    
+    public func replace(at index: Int, withItem item: T) {
+        if leftBound == rightBound {
+            value = item
+        }
+        else if let leftChild = leftChild,
+            let rightChild = rightChild {
+            if leftChild.rightBound >= index {
+                leftChild.replace(at: index, withItem: item)
+            }
+            else { rightChild.replace(at: index, withItem: item)}
+            
+            value = function(leftChild.value, rightChild.value)
+        }
+    }
 }
-
-let minimum = [75,30,100,38,50,51,52,20,81,5]
-let minSegment = SegmentTree(array: minimum, function: min)
-print(minSegment.query(leftBound: 0, rightBound: 9))
-print(minSegment.query(leftBound: 2, rightBound: 3))
-print(minSegment.query(leftBound: 5, rightBound: 8))
-print(minSegment.query(leftBound: 7, rightBound: 9))
