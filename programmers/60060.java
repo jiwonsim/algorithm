@@ -1,73 +1,109 @@
 import java.util.*;
 
-class Solution {
+class TrieNode {
+    Character value;
+    HashMap<Character, TrieNode> children;
+    boolean isLeaf;
+    int count;
 
-    int countByRange(String left, String right, ArrayList<String> words) {
-        int si = Arrays.binarySearch(words.toArray(), left);
-        int ei = Arrays.binarySearch(words.toArray(), right);
-
-        if (si < 0 && ei < 0) { return Math.abs(si-ei); }
-        else if (si > 0 && ei < 0) { return (ei+1)*(-1) - si; }
-        else if (si < 0 && ei > 0) { return (si+1)*(-1) - ei; }
-        else { return ei-si+1; }
+    TrieNode(Character value) {
+        this.value = value;
+        this.children = new HashMap<>();
+        this.isLeaf = false;
+        this.count = 0;
     }
+
+    void add(Character value) {
+        children.put(value, new TrieNode(value));
+    }
+
+    public boolean isLeaf() {
+        return isLeaf;
+    }
+
+    public void setLeaf(boolean leaf) {
+        isLeaf = leaf;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+}
+
+class Trie {
+    TrieNode root;
+
+    Trie() {
+        root = new TrieNode(null);
+    }
+
+    void insert(String word) {
+        TrieNode current = root;
+        for (Character c : word.toCharArray()) {
+            if (current.children.get(c) == null) {
+                current.add(c);
+            }
+            current.setCount(current.getCount()+1);
+            current = current.children.get(c);
+        }
+        current.setLeaf(true);
+    }
+
+    int counting(String word) {
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            Character c = word.charAt(i);
+            if (c == '?') { return current.count; }
+            if (current.children.get(c) == null) { return 0; }
+
+            current = current.children.get(c);
+        }
+        return current.count;
+    }
+}
+
+class Solution {
 
     String reverse(String str) {
         return new StringBuffer(str).reverse().toString();
     }
 
-    Character[] makeCharArr(String str) {
-        Character[] result = new Character[str.length()];
-
-        for (int i = 0; i < str.length(); i++) {
-            result[i] = str.charAt(i);
-        }
-        return result;
-    }
-
     public int[] solution(String[] words, String[] queries) {
-        int[] answer = new int[queries.length];
 
-        // 문자열 리스트 초기화
-        ArrayList<String>[] wordList = new ArrayList[100001];
-        ArrayList<String>[] reversedList = new ArrayList[100001];
-        for (int i = 0; i < wordList.length; i++) {
-            wordList[i] = new ArrayList<>();
-            reversedList[i] = new ArrayList<>();
+        int digit = 100000;
+
+        // 트라이 배열 초기화
+        Trie[] wordList = new Trie[digit+1]; // 접미사가 물음표인 트라이 배열
+        Trie[] reversedList = new Trie[digit+1]; // 접두사가 물음표인 트라이 배열
+        for (int i = 0; i <= digit; i++) {
+            wordList[i] = new Trie();
+            reversedList[i] = new Trie();
         }
 
-        // 문자열 리스트 삽입
         for (String word : words) {
-            wordList[word.length()].add(word);
-            reversedList[word.length()].add(reverse(word));
+            int length = word.length();
+            wordList[length].insert(word);
+            reversedList[length].insert(reverse(word));
         }
 
-        for (int i = 0; i < wordList.length; i++) {
-            Collections.sort(wordList[i]);
-            Collections.sort(reversedList[i]);
-        }
+        int[] result = new int[queries.length];
 
         for (int i = 0; i < queries.length; i++) {
             String query = queries[i];
-
             int length = query.length();
-            if (query.charAt(0) == '?') {
-                // 앞에서부터 물음표가 시작됨 (eg. ????o)
-                String reversed = reverse(query);
-                String start = reversed.replace('?', 'a');
-                String end = reversed.replace('?', 'z');
 
-                answer[i] = countByRange(start, end, reversedList[length]);
+            if (query.charAt(0) == '?') { // 접두사가 물음표
+                result[i] = reversedList[length].counting(reverse(query));
             }
-            else {
-                // 뒤에서부터 물음표가 시작됨 (eg. fro??)
-                String start = query.replace('?', 'a');
-                String end = query.replace('?', 'z');
-
-                answer[i] = countByRange(start, end, wordList[length]);
+            else { // 접미사가 물음표
+                result[i] = wordList[length].counting(query);
             }
         }
 
-        return answer;
+        return result;
     }
 }
