@@ -1,67 +1,63 @@
 import java.util.*;
 import java.io.*;
 
+/*
+이전에는 숫자랑 연산을 모두 한 리스트에 넣어서
+그걸 다 탐색하느라고(?) 시간초과가 난 것 같다.
+이전과 같이 배열을 이용했지만 숫자와 연산을 나눠서 계산했기 때문에 시간초과가 나지 않고 통과했다. 
+ */
+
 public class Main {
 
-    static int LEFT = 1, RIGHT = 0, SAME = -1;
+    static char[] oper;
+    static long[] nums;
 
-    static long calculate(String l, String o, String r) {
-        long left = Long.parseLong(l);
-        long right = Long.parseLong(r);
-
-        if (o.equals("+")) { return left+right; }
-        else if (o.equals("-")) { return left-right; }
-        else if (o.equals("*")) { return left*right; }
-        else { return left/right; }
+    static long calculate(long l, char o, long r) {
+        if (o == '+') return l+r;
+        else if (o == '-') return l-r;
+        else if (o == '*') return l*r;
+        else return l/r;
     }
 
-    static int prior(String oper1, String oper2) {
-        // 파라미터1이 2보다 우선될 때 return 1
-        // 파라미터2가 1보다 우선될 때 return 0
-        // 둘의 우선순위가 같을 때는 -1
-        if (oper1.equals("*") || oper1.equals("/")) {
-            // 파라미터1이 곱셈 나눗셈인 경우에는 무조건
-            if (oper2.equals("*") || oper2.equals("/")) return SAME;
-            else { return LEFT; }
-        }
-        else {
-            // 파라미터가 덧셈 뺄셈인 경우
-            if (oper2.equals("*") || oper2.equals("/")) return RIGHT;
-            else { return SAME; }
-        }
+    static int prior(char oper) {
+        if (oper == '*' || oper == '/') return 1;
+        else return 0;
     }
 
-    static String go(ArrayList<String> list) {
-        if (list.size() == 0) return "0";
-        if (list.size() == 1) return list.get(0);
+    static Long go(int numsHead, int operHead) {
 
-        int frontHead = 0, backHead = list.size()-1;
-        while (frontHead < backHead) {
-            long front = calculate(list.get(frontHead), list.get(frontHead+1), list.get(frontHead+2));
-            long back = calculate(list.get(backHead-2), list.get(backHead-1), list.get(backHead));
+        int numsFirst = 0, numsLast = numsHead;
+        int operFirst = 0, operLast = operHead;
 
-            int prior = prior(list.get(frontHead+1), list.get(backHead-1));
+        while (numsFirst < numsLast) { // 숫자가 하나만 남을 때까지
+            long frontL = nums[numsFirst], frontR = nums[numsFirst+1];
+            char frontO = oper[operFirst];
+            long frontRes = calculate(frontL, frontO, frontR);
 
-            if (prior == LEFT) {
-                list.set(frontHead+2, String.valueOf(front));
-                frontHead += 2;
+            long backR = nums[numsLast], backL = nums[numsLast-1];
+            char backO = oper[operLast];
+            long backRes = calculate(backL, backO, backR);
+
+            boolean f = false, b = false;
+            if (prior(frontO) > prior(backO)) f = true;
+            else if (prior(frontO) < prior(backO)) b = true;
+            else {
+                if (frontRes >= backRes) f = true;
+                else b = true;
             }
-            else if (prior == RIGHT) {
-                list.set(backHead-2, String.valueOf(back));
+
+            if (f) {
+                numsFirst+=1;
+                nums[numsFirst] = frontRes;
+                operFirst+=1;
             }
             else {
-                if (front < back) {
-                    list.set(backHead-2, String.valueOf(back));
-                    backHead -= 2;
-                }
-                else {
-                    list.set(frontHead+2, String.valueOf(front));
-                    frontHead += 2;
-                }
+                numsLast-=1;
+                nums[numsLast] = backRes;
+                operLast-=1;
             }
         }
-
-        return list.get(frontHead);
+        return nums[numsFirst];
     }
 
 
@@ -72,21 +68,26 @@ public class Main {
         String input = reader.readLine();
         StringBuffer buffer = new StringBuffer();
 
-        // 수식의 리스트 초기화
-        ArrayList<String> list = new ArrayList<>();
+        // 수식을 위한 덱 초기화
+        oper = new char[10000000+1];
+        nums = new long[10000000+1];
+        int numsHead = 0, operHead = 0;
+
         for (int i = 0; i < input.length(); i++) {
             if (i != 0 && (input.charAt(i) == '+' || input.charAt(i) == '-' || input.charAt(i) == '/' || input.charAt(i) == '*')) {
-                list.add(buffer.toString());
-                list.add(String.valueOf(input.charAt(i)));
+                oper[operHead] = input.charAt(i);
+                nums[numsHead] = Long.parseLong(buffer.toString());
+                numsHead+=1;
+                operHead+=1;
                 buffer = new StringBuffer();
             }
             else {
                 buffer.append(input.charAt(i));
             }
         }
-        list.add(buffer.toString());
+        nums[numsHead] = Long.parseLong(buffer.toString());
 
-        writer.write(go(list));
+        writer.write(go(numsHead, operHead-1) + "");
         writer.flush();
     }
 }
