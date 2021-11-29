@@ -4,13 +4,11 @@
 
 ## Time Complexity of List  
 
-![image-20211129235122410](/Users/simjiwon/Library/Application Support/typora-user-images/image-20211129235122410.png)
-
-
+![image-20211130004645200](/Users/simjiwon/Desktop/Images/image-20211130004645200.png)
 
 ## Time Complexity of Deque 
 
-![image-20211130001427533](/Users/simjiwon/Library/Application Support/typora-user-images/image-20211130001427533.png)
+![image-20211130004712072](/Users/simjiwon/Desktop/Images/image-20211130004712072.png)
 
 
 
