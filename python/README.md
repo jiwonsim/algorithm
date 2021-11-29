@@ -4,11 +4,11 @@
 
 ## Time Complexity of List  
 
-![image-20211130004645200](/Users/simjiwon/Desktop/Images/image-20211130004645200.png)
+![image-20211130004645200](https://user-images.githubusercontent.com/28748103/143899421-f4d9545e-e98b-4dbc-983c-9e375ebe2c6c.png)
 
 ## Time Complexity of Deque 
 
-![image-20211130004712072](/Users/simjiwon/Desktop/Images/image-20211130004712072.png)
+![](https://user-images.githubusercontent.com/28748103/143899447-0747399a-e1e0-455e-880e-444ae1afe0d6.png)
 
 
 
